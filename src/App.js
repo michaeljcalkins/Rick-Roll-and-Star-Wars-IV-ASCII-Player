@@ -23,7 +23,7 @@ class App extends Component<Props, State> {
   state = {
     frames: [],
     currentFrame: 0,
-    currentMovie: "short_intro",
+    currentMovie: "sw1",
     movieCache: {
       rick_roll: null,
       sw1: null,
@@ -34,7 +34,7 @@ class App extends Component<Props, State> {
   frameTimeout: TimeoutID;
 
   componentDidMount = () => {
-    this.handleFetchMovie("short_intro");
+    this.handleFetchMovie("sw1");
   };
 
   formatMovieFrames = (frames: string): any => {

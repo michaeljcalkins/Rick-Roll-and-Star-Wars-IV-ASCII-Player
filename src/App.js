@@ -6,25 +6,17 @@ import chunk from "lodash/chunk";
 import Player from "./components/Player";
 import MovieButton from "./components/MovieButton";
 
-/**
-  Loads the ASCII movie from given text file.
-  Using an encoded format, described on
-  http://www.asciimation.co.nz/asciimation/ascii_faq.html
-  In short:
-      67x14 chars
-      lines separated with \n
-      first line is a number telling delay in number of frames
-      13 lines effective frame size
-      15 frames per second
-*/
-
 type Props = {};
 
 type State = {
-  frames: string[],
+  frames: any,
   currentFrame: number,
   currentMovie: "rick_roll" | "sw1" | "short_intro",
-  movieCache: {}
+  movieCache: {
+    rick_roll: any,
+    sw1: any,
+    short_intro: any
+  }
 };
 
 class App extends Component<Props, State> {
@@ -32,20 +24,24 @@ class App extends Component<Props, State> {
     frames: [],
     currentFrame: 0,
     currentMovie: "short_intro",
-    movieCache: {}
+    movieCache: {
+      rick_roll: null,
+      sw1: null,
+      short_intro: null
+    }
   };
 
-  frameTimeout = null;
+  frameTimeout: TimeoutID;
 
   componentDidMount = () => {
     this.handleFetchMovie("short_intro");
   };
 
-  formatMovieFrames = (frames: string): string[] => {
+  formatMovieFrames = (frames: string): any => {
     return chunk(frames.split("\n"), 14);
   };
 
-  handleStartMovie = (movie: string, frames: string[]) => {
+  handleStartMovie = (movie: "rick_roll" | "sw1" | "short_intro", frames: any) => {
     let movieCache = {
       ...this.state.movieCache
     };
@@ -62,7 +58,7 @@ class App extends Component<Props, State> {
     );
   };
 
-  handleFetchMovie = (movie: string) => {
+  handleFetchMovie = (movie: "rick_roll" | "sw1" | "short_intro") => {
     if (this.state.movieCache[movie]) {
       this.handleStartMovie(movie, this.state.movieCache[movie]);
       return;

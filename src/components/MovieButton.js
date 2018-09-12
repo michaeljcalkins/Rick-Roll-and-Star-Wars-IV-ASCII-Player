@@ -3,8 +3,8 @@ import React from "react";
 
 type Props = {
   name: string,
-  movie: string,
-  onSetMovie: string => void
+  movie: "sw1" | "rick_roll" | "short_intro",
+  onSetMovie: ("sw1" | "rick_roll" | "short_intro") => void
 };
 
 const MovieButton = function(props: Props) {

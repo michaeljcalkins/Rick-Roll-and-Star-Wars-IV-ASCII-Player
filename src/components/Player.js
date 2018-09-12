@@ -4,7 +4,7 @@ import "./Player.css";
 
 type Props = {
   currentFrame: number,
-  frames: string[]
+  frames: any
 };
 
 const Player = function(props: Props) {

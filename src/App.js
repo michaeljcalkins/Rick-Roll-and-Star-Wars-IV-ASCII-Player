@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
 import chunk from "lodash/chunk";
+import Player from "./components/Player";
+import MovieButton from "./components/MovieButton";
 
 /**
   Loads the ASCII movie from given text file.
@@ -21,53 +23,70 @@ type Props = {};
 type State = {
   frames: string[],
   currentFrame: number,
-  currentMovie: "short_intro" | "rick_roll" | "sw1"
+  currentMovie: "rick_roll" | "sw1" | "short_intro",
+  movieCache: {}
 };
 
 class App extends Component<Props, State> {
   state = {
     frames: [],
     currentFrame: 0,
-    currentMovie: "short_intro"
+    currentMovie: "short_intro",
+    movieCache: {}
   };
 
   frameTimeout = null;
 
   componentDidMount = () => {
-    this.handleFetchMovie();
+    this.handleFetchMovie("short_intro");
   };
 
-  handleFetchMovie = () => {
-    axios.get(`/movies/${this.state.currentMovie}.txt`).then(response => {
-      this.setState(
-        {
-          frames: chunk(response.data.split("\n"), 14)
-        },
-        () => this.playFrame()
-      );
+  formatMovieFrames = (frames: string): string[] => {
+    return chunk(frames.split("\n"), 14);
+  };
+
+  handleStartMovie = (movie: string, frames: string[]) => {
+    let movieCache = {
+      ...this.state.movieCache
+    };
+    movieCache[movie] = frames;
+
+    this.setState(
+      {
+        currentMovie: movie,
+        currentFrame: 0,
+        frames,
+        movieCache
+      },
+      () => this.playFrame()
+    );
+  };
+
+  handleFetchMovie = (movie: string) => {
+    if (this.state.movieCache[movie]) {
+      this.handleStartMovie(movie, this.state.movieCache[movie]);
+      return;
+    }
+
+    axios.get(`/movies/${movie}.txt`).then(response => {
+      this.handleStartMovie(movie, this.formatMovieFrames(response.data));
     });
   };
 
   playFrame = () => {
-    if (!this.state.frames[this.state.currentFrame]) {
-      this.setState(
-        {
-          currentFrame: 0
-        },
-        () => this.playFrame()
-      );
-      return;
+    try {
+      const frameDelay = (1000 / 15) * parseInt(this.state.frames[this.state.currentFrame][0], 10);
+      this.frameTimeout = setTimeout(() => {
+        this.setState(
+          {
+            currentFrame: this.state.currentFrame + 1
+          },
+          () => this.playFrame()
+        );
+      }, frameDelay);
+    } catch (e) {
+      this.handleFetchMovie(this.state.currentMovie);
     }
-
-    const frameDelay = (1000 / 15) * parseInt(this.state.frames[this.state.currentFrame][0], 10);
-    this.frameTimeout = setTimeout(() => {
-      this.setState(
-        {
-          currentFrame: this.state.currentFrame + 1
-        },
-        () => this.playFrame()
-      );
-    }, frameDelay);
   };
 
   renderCurrentFrame = () => {
@@ -76,34 +95,21 @@ class App extends Component<Props, State> {
     return frameLines.slice(1, frameLines.length).join("\n");
   };
 
-  stopMovie = () => {
+  stopMovie = (): void => {
     clearTimeout(this.frameTimeout);
   };
 
-  handleSetMovie = (newMovie: "short_intro" | "sw1" | "rick_roll") => {
+  handleSetMovie = (movie: "sw1" | "rick_roll" | "short_intro") => {
     this.stopMovie();
-    this.setState(
-      {
-        currentMovie: newMovie,
-        currentFrame: 0
-      },
-      this.handleFetchMovie()
-    );
+    this.handleFetchMovie(movie);
   };
 
   render() {
     return (
       <React.Fragment>
-        <div className="App-player">{this.renderCurrentFrame()}</div>
-        <div className="App-navigation">
-          <button className="btn-flat waves-effect waves-light" onClick={() => this.handleSetMovie("rick_roll")}>
-            Rick Roll
-          </button>
-          &nbsp;
-          <button className="btn-flat waves-effect waves-light" onClick={() => this.handleSetMovie("sw1")}>
-            Star Wars IV
-          </button>
-        </div>
+        <Player frames={this.state.frames} currentFrame={this.state.currentFrame} />
+        <MovieButton name="Rick Roll" movie="rick_roll" onSetMovie={this.handleSetMovie} />
+        <MovieButton name="Star Wars IV" movie="sw1" onSetMovie={this.handleSetMovie} />
       </React.Fragment>
     );
   }

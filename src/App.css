@@ -9,22 +9,6 @@ body {
   overflow: hidden;
 }
 
-.App-player {
-  transform: translate(-48%, -50%);
-  font-family: monospace;
-  font-size: 3.3vh;
-  white-space: pre;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1230px;
-  height: 604px;
-}
-
-.App-navigation {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  width: 400px;
-  transform: translateX(-50%);
+body {
+  padding: 15px;
 }

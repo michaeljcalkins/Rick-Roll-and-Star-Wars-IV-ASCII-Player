@@ -1,0 +1,11 @@
+.App-player {
+  transform: translate(-50%, -50%);
+  font-family: monospace;
+  font-size: 31px;
+  white-space: pre;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1142px;
+  height: 600px;
+}

@@ -1,11 +1,36 @@
 .App-player {
-  transform: translate(-50%, -50%);
-  font-family: monospace;
-  font-size: 31px;
-  white-space: pre;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  left: 50%;
-  top: 50%;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.App-player-text {
   width: 1142px;
   height: 600px;
+  font-size: 31px;
+  font-family: monospace;
+  white-space: pre;
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 992px) {
+  .App-player-text {
+    width: 590px;
+    height: 310px;
+    font-size: 16px;
+  }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 600px) {
+  .App-player-text {
+    width: 480px;
+    height: 252px;
+    font-size: 13px;
+  }
 }

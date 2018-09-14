@@ -11,7 +11,11 @@ const Player = function(props: Props) {
   if (!props.frames[props.currentFrame]) return null;
   const frameLines = props.frames[props.currentFrame];
   const textToRender = frameLines.slice(1, frameLines.length).join("\n");
-  return <div className="App-player">{textToRender}</div>;
+  return (
+    <div className="App-player">
+      <div className="App-player-text">{textToRender}</div>
+    </div>
+  );
 };
 
 export default Player;
